@@ -1,0 +1,9 @@
+trigger TransacaoTrigger on Transacao_Pagamento__c (after insert , after Update) {
+       
+    if(trigger.IsAfter || trigger.IsUpdate ){
+      // System.debug; 
+      EstornoTriggerHandler.lancaEstorno(Trigger.New);
+     
+    }
+
+}
