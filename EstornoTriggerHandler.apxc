@@ -1,0 +1,39 @@
+public class EstornoTriggerHandler {
+    
+    public static void lancaEstorno(List<Transacao_Pagamento__c> novaLista){
+         System.debug('1');
+        List<Estorno__c>  atualizacoes = new List<Estorno__c>();           
+                   
+        for(Transacao_Pagamento__c atz : novaLista ){
+            if(atz.nome_cliente__c != NULL){   
+             Estorno__c est = new Estorno__c ();  
+              Integer diasEntre = Date.valueOf(atz.Data_Pagamento__c).daysBetween(system.today());
+            if (diasEntre <= 1){
+                est.Percentual_Estornado__c = 100;
+                est.Valor_Estornado__c = (atz.Valor_pago__c / 100) * 100;
+                est.Diferen_a_de_dias__c = diasEntre ;
+                est.Tipo_Estorno__c = 'Total';
+                est.Prazo__c = 'Dentro do Prazo';
+            }if(diasEntre > 1 && diasEntre < 7){
+                est.Percentual_Estornado__c = 80;
+                est.Valor_Estornado__c = (atz.Valor_pago__c / 100) * 80;
+                est.Diferen_a_de_dias__c = diasEntre ;
+                est.Tipo_Estorno__c = 'Parcial';
+                est.Prazo__c = 'Dentro do Prazo';
+            }if(diasEntre >= 7){
+                est.Percentual_Estornado__c = 60;
+                est.Valor_Estornado__c = (atz.Valor_pago__c / 100) * 60;
+                est.Diferen_a_de_dias__c = diasEntre ;
+                est.Tipo_Estorno__c = 'Parcial';
+                est.Prazo__c = 'Fora do Prazo';
+            } 
+             // est.Name = atz.nome_cliente__c;   
+            atualizacoes.add(est);
+            }                                        
+System.debug('2');           
+           }
+     insert atualizacoes;
+                    
+    }
+   
+}
